@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.azrinurvani.newsapicompose.data.HeadlinesApiService
 import com.azrinurvani.newsapicompose.data.paging.ArticlePagingSource
+import com.azrinurvani.newsapicompose.data.paging.SearchArticlePagingSource
 import com.azrinurvani.newsapicompose.domain.model.NewsArticle
 import com.azrinurvani.newsapicompose.domain.repository.HeadlineRepository
 import com.azrinurvani.newsapicompose.util.Constants.ITEMS_PER_PAGE
@@ -23,6 +24,21 @@ class HeadlineRepositoryImpl(
             pagingSourceFactory = {
                 ArticlePagingSource(
                     category = category,
+                    api = headlineApi
+                )
+            }
+        ).flow
+    }
+
+    override fun searchForNews(query: String): Flow<PagingData<NewsArticle>> {
+        return Pager(
+            config = PagingConfig(
+                initialLoadSize = 10,
+                pageSize = ITEMS_PER_PAGE
+            ),
+            pagingSourceFactory = {
+                SearchArticlePagingSource(
+                    searchQuery = query,
                     api = headlineApi
                 )
             }

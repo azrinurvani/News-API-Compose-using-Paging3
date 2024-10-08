@@ -59,8 +59,9 @@ class HeadlineViewModel @Inject constructor(
                 searchJob?.cancel()
                 searchJob = viewModelScope.launch {
                     delay(1000L) //set delay 1000 ms before retrieve search api
-                    Log.d("HeadlineViewModel", "OnSearchQueryChange: ${state.searchQuery}")
-                    //add block for call search api
+                    searchForNews(
+                        searchQuery = state.searchQuery
+                    )
                 }
 
             }
@@ -84,6 +85,31 @@ class HeadlineViewModel @Inject constructor(
             }catch (e : Exception){
                 state = state.copy(
 //                    articles = PagingData.empty(),
+                    isLoading = false,
+                    error = e.message
+                )
+                Log.e(javaClass.name, "getNewsArticles: ${e.message}")
+            }
+        }
+    }
+
+    private fun searchForNews(searchQuery : String){
+        if (searchQuery.isEmpty()){
+            return
+        }
+        viewModelScope.launch {
+            try {
+                headlineUseCases.fetchSearchNewsArticleUseCase(
+                    searchQuery = searchQuery
+                ).collect{
+                    state = state.copy(
+                        isLoading = false,
+                        error = null
+                    )
+                    _newsArticles.value = it
+                }
+            }catch (e: Exception){
+                state = state.copy(
                     isLoading = false,
                     error = e.message
                 )

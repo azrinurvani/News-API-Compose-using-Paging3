@@ -8,4 +8,6 @@ interface HeadlineRepository {
 
     fun getHeadlineArticles(category : String) : Flow<PagingData<NewsArticle>>
 
+    fun searchForNews(query : String) : Flow<PagingData<NewsArticle>>
+
 }

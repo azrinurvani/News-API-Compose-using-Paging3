@@ -9,6 +9,7 @@ interface HeadlinesApiService {
 
     companion object{
         const val HEADLINE_END_POINT = "/v2/top-headlines"
+        const val SEARCH_END_POINT = "/v2/everything"
     }
 
     @GET(HEADLINE_END_POINT)
@@ -18,6 +19,14 @@ interface HeadlinesApiService {
         @Query("page") page: Int,
         @Query("pageSize") pageSize: Int
     ) : NewsRemoteDto
+
+    @GET(SEARCH_END_POINT)
+    suspend fun searchForNews(
+        @Query("apiKey") apiKey: String = API_KEY,
+        @Query("q") query: String,
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
+    ): NewsRemoteDto
 
 
 }

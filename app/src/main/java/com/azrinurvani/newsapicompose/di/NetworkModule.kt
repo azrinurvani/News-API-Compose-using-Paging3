@@ -6,6 +6,7 @@ import com.azrinurvani.newsapicompose.data.HeadlinesApiService
 import com.azrinurvani.newsapicompose.data.repository.HeadlineRepositoryImpl
 import com.azrinurvani.newsapicompose.domain.repository.HeadlineRepository
 import com.azrinurvani.newsapicompose.domain.use_case.FetchNewsArticleUseCase
+import com.azrinurvani.newsapicompose.domain.use_case.FetchSearchNewsArticleUseCase
 import com.azrinurvani.newsapicompose.domain.use_case.HeadlineUseCases
 import com.azrinurvani.newsapicompose.util.Constants.CALL_TIMEOUT
 import com.azrinurvani.newsapicompose.util.Constants.CONNECT_TIMEOUT
@@ -76,6 +77,9 @@ object NetworkModule {
     ) : HeadlineUseCases {
         return HeadlineUseCases(
             fetchNewsArticleUseCase = FetchNewsArticleUseCase(
+                headlineRepository
+            ),
+            fetchSearchNewsArticleUseCase = FetchSearchNewsArticleUseCase(
                 headlineRepository
             )
         )

@@ -69,27 +69,29 @@ fun HeadlineScreen(
     ) {
         Crossfade(targetState = state.isSearchVisible) { isVisible ->
             if (isVisible) {
-                SearchAppBar(
-                    modifier = Modifier.focusRequester(focusRequester),
-                    value = state.searchQuery,
-                    onValueChange = { newValue ->
-                        onEvent(HeadlineScreenEvent.OnSearchQueryChange(newValue))
-                    },
-                    onCloseIconClicked = {
-                        onEvent(HeadlineScreenEvent.OnCloseIconClicked)
-                    },
-                    onSearchClicked = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                )
-                NewsListVertical(
-                    modifier = modifier,
-                    articles = articles,
-                    onCardClicked = { /*Event onCardClicked*/ },
-                    onRetry = { }
-                )
-            }else{
+                Column {
+                    SearchAppBar(
+                        modifier = Modifier.focusRequester(focusRequester),
+                        value = state.searchQuery,
+                        onValueChange = { newValue ->
+                            onEvent(HeadlineScreenEvent.OnSearchQueryChange(newValue))
+                        },
+                        onCloseIconClicked = {
+                            onEvent(HeadlineScreenEvent.OnCloseIconClicked)
+                        },
+                        onSearchClicked = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                    NewsListVertical(
+                        modifier = modifier,
+                        articles = articles,
+                        onCardClicked = { /*Event onCardClicked*/ },
+                        onRetry = { }
+                    )
+                }
+            } else {
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
