@@ -1,4 +1,4 @@
-package com.azrinurvani.newsapicompose.presentation.headline
+package com.azrinurvani.newsapicompose.presentation.headline_screen
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -22,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.paging.compose.LazyPagingItems
 import com.azrinurvani.newsapicompose.domain.model.NewsArticle
+import com.azrinurvani.newsapicompose.presentation.component.BottomSheetContent
 import com.azrinurvani.newsapicompose.presentation.component.CategoryTabRow
 import com.azrinurvani.newsapicompose.presentation.component.NewsListVertical
 import com.azrinurvani.newsapicompose.presentation.component.NewsTopBar
@@ -37,7 +43,8 @@ fun HeadlineScreen(
     modifier: Modifier = Modifier,
     state : HeadlineScreenState,
     onEvent: (HeadlineScreenEvent) -> Unit,
-    articles : LazyPagingItems<NewsArticle>
+    articles : LazyPagingItems<NewsArticle>,
+    onReadFullStoryButtonClick: (String) -> Unit
 ){
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -56,6 +63,31 @@ fun HeadlineScreen(
         }.collect{ page ->
             onEvent(HeadlineScreenEvent.OnCategoryChange(category = categories[page]))
         }
+    }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var shouldBottomSheetShow by remember { mutableStateOf(false) }
+
+    if (shouldBottomSheetShow){
+        ModalBottomSheet(
+            onDismissRequest = { shouldBottomSheetShow = false },
+            sheetState = sheetState,
+            content = {
+                state.selectedArticle?.let {
+                    BottomSheetContent(
+                        article = it,
+                        onReadyFullStoryButtonClicked = {
+                            onReadFullStoryButtonClick(it.url)
+                            coroutineScope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) shouldBottomSheetShow = false
+                            }
+                        }
+                    )
+                }
+            }
+        )
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -86,14 +118,21 @@ fun HeadlineScreen(
                     )
                     NewsListVertical(
                         modifier = modifier,
+//                        state = state,
                         articles = articles,
-                        onCardClicked = { /*Event onCardClicked*/ },
-                        onRetry = { }
+                        onCardClicked = { article ->
+                            shouldBottomSheetShow = true
+                            onEvent(HeadlineScreenEvent.OnNewsCardArticleClicked(article = article))
+                        },
+                        onRetry = {
+                            onEvent(HeadlineScreenEvent.OnSearchQueryChange(searchQuery = state.searchQuery))
+                        }
                     )
                 }
             } else {
                 Scaffold(
-                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                    modifier = Modifier
+                        .nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = {
                         NewsTopBar(
                             scrollBehavior = scrollBehavior,
@@ -126,9 +165,15 @@ fun HeadlineScreen(
                         ){
                             NewsListVertical(
                                 modifier = modifier,
+//                                state = state,
                                 articles = articles,
-                                onCardClicked = { /*Event onCardClicked*/ },
-                                onRetry = { }
+                                onCardClicked = { article ->
+                                    shouldBottomSheetShow = true
+                                    onEvent(HeadlineScreenEvent.OnNewsCardArticleClicked(article = article))
+                                },
+                                onRetry = {
+                                    onEvent(HeadlineScreenEvent.OnCategoryChange(category = state.category))
+                                }
                             )
                         }
 

@@ -1,8 +1,10 @@
 package com.azrinurvani.newsapicompose.presentation.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +22,14 @@ fun RetryContent(
 ) {
     Column(
         modifier = modifier
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = error, color = Color.Red, fontSize = 18.sp)
+        Text(
+            text = error,
+            color = Color.Red, fontSize = 18.sp
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = onRetry,

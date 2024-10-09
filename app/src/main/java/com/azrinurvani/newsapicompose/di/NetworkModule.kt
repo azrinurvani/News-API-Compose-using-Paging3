@@ -47,6 +47,8 @@ object NetworkModule {
                 timeout = CALL_TIMEOUT,
                 TimeUnit.SECONDS
             )
+//            .interceptors()
+//            .add(Interceptor { TODO("Not yet implemented") })
             .build()
     }
 

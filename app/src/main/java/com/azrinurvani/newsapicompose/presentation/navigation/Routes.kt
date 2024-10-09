@@ -6,4 +6,7 @@ sealed class Routes {
 
     @Serializable
     data object HeadlineScreen : Routes()
+
+    @Serializable
+    data class ArticleScreen(val newsUrl : String) : Routes()
 }

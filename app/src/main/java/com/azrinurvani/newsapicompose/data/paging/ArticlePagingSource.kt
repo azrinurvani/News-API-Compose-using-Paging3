@@ -31,8 +31,17 @@ class ArticlePagingSource(
                 prevKey = if (currentPage == STARTING_PAGE_INDEX) null else currentPage - 1,
                 nextKey = if (endOfPaginationReached) null else currentPage + 1
             )
-        }catch (e : Exception){
-            Log.e(javaClass.name, "LoadResult.Error ${e.message}")
+        }
+//        catch (e : UnknownHostException){
+//            Log.e(javaClass.name, "LoadResult.Error UnknownHostException :${e.message}")
+//            return LoadResult.Error(e)
+//        }
+//        catch (e : HttpException){
+//            Log.e(javaClass.name, "LoadResult.Error HttpException :${e.message}")
+//            return LoadResult.Error(e)
+//        }
+        catch (e : Exception){
+            Log.e(javaClass.name, "LoadResult.Error Exception :${e.message}")
             return LoadResult.Error(e)
         }
     }

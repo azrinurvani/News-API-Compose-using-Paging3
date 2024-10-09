@@ -5,9 +5,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.azrinurvani.newsapicompose.presentation.headline.HeadlineScreen
-import com.azrinurvani.newsapicompose.presentation.headline.HeadlineViewModel
+import com.azrinurvani.newsapicompose.presentation.articles.ArticleScreen
+import com.azrinurvani.newsapicompose.presentation.headline_screen.HeadlineScreen
+import com.azrinurvani.newsapicompose.presentation.headline_screen.HeadlineViewModel
 
 @Composable
 fun NavGraphSetup(
@@ -23,7 +25,20 @@ fun NavGraphSetup(
             HeadlineScreen(
                 articles = articles,
                 state = headlineViewModel.state,
-                onEvent = headlineViewModel::onEvent
+                onEvent = headlineViewModel::onEvent,
+                onReadFullStoryButtonClick = { url ->
+                    navController.navigate(Routes.ArticleScreen(url))
+                }
+            )
+        }
+
+        composable<Routes.ArticleScreen> { backStackEntry ->
+            val newsUrl = backStackEntry.toRoute<Routes.ArticleScreen>().newsUrl
+            ArticleScreen(
+               urlString = newsUrl,
+                onBackPressed = {
+                    navController.navigateUp()
+                }
             )
         }
     }

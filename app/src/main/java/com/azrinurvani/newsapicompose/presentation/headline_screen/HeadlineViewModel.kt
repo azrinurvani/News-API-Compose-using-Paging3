@@ -1,4 +1,4 @@
-package com.azrinurvani.newsapicompose.presentation.headline
+package com.azrinurvani.newsapicompose.presentation.headline_screen
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -38,7 +38,7 @@ class HeadlineViewModel @Inject constructor(
                 getNewsArticles(category = event.category)
             }
             is HeadlineScreenEvent.OnNewsCardArticleClicked -> {
-
+                state = state.copy(selectedArticle = event.article)
             }
             HeadlineScreenEvent.OnSearchIconClicked -> {
                 _newsArticles.value = PagingData.empty()
@@ -75,19 +75,19 @@ class HeadlineViewModel @Inject constructor(
                     category = category
                 ).cachedIn(viewModelScope)
                 .collect{
-                    state = state.copy(
-//                        articles = it,
-                        isLoading = false,
-                        error = null
-                    )
+//                    state = state.copy(
+////                        articles = it,
+//                        isLoading = false,
+//                        error = null
+//                    )
                     _newsArticles.value = it
                 }
             }catch (e : Exception){
-                state = state.copy(
-//                    articles = PagingData.empty(),
-                    isLoading = false,
-                    error = e.message
-                )
+//                state = state.copy(
+////                    articles = PagingData.empty(),
+//                    isLoading = false,
+//                    error = e.message
+//                )
                 Log.e(javaClass.name, "getNewsArticles: ${e.message}")
             }
         }
@@ -102,17 +102,17 @@ class HeadlineViewModel @Inject constructor(
                 headlineUseCases.fetchSearchNewsArticleUseCase(
                     searchQuery = searchQuery
                 ).collect{
-                    state = state.copy(
-                        isLoading = false,
-                        error = null
-                    )
+//                    state = state.copy(
+//                        isLoading = false,
+//                        error = null
+//                    )
                     _newsArticles.value = it
                 }
             }catch (e: Exception){
-                state = state.copy(
-                    isLoading = false,
-                    error = e.message
-                )
+//                state = state.copy(
+//                    isLoading = false,
+//                    error = e.message
+//                )
                 Log.e(javaClass.name, "getNewsArticles: ${e.message}")
             }
         }
